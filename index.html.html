@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тест по биологии</title>
+<style>
+:root{--bg:#eaf6e4;--card:#fff;--ink:#1f3a2a;--mut:#5d7a68;--acc:#2f9e5b;--accd:#1f7a43;--line:#cfe6d4;--ok:#d6f5df;--no:#fde0e0;--okb:#2f9e5b;--nob:#e05555;--chip:#f3fbf0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13241a;--card:#1c3326;--ink:#e6f5ea;--mut:#9dbba8;--acc:#43b872;--accd:#2f9e5b;--line:#2e4d3a;--ok:#1f4a31;--no:#4d2626;--chip:#244233}}
+:root[data-theme="dark"]{--bg:#13241a;--card:#1c3326;--ink:#e6f5ea;--mut:#9dbba8;--acc:#43b872;--accd:#2f9e5b;--line:#2e4d3a;--ok:#1f4a31;--no:#4d2626;--chip:#244233}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Trebuchet MS",Verdana,sans-serif;font-size:17px;min-height:100%}
+#app{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:30px;margin:8px 0;text-align:center}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:18px;margin-top:12px}
+.hero{font-size:64px;text-align:center}
+input{width:100%;font:inherit;padding:12px 14px;margin:6px 0 12px;border-radius:12px;border:2px solid var(--line);background:var(--chip);color:var(--ink)}
+label{font-weight:700;color:var(--mut)}
+button{font:inherit;font-weight:800;border:0;border-radius:14px;padding:13px 20px;background:var(--acc);color:#fff;cursor:pointer}
+button:active{background:var(--accd)}
+.wide{width:100%}
+.wa{display:block;text-align:center;text-decoration:none;font-weight:800;border-radius:14px;padding:14px 16px;background:#25a244;color:#fff}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--mut)}
+.bar{height:12px;background:var(--line);border-radius:8px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;width:100%;background:var(--acc)}
+.bar.low i{background:var(--nob)}
+.q{font-size:20px;font-weight:800;margin:10px 0 14px}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;background:var(--chip);color:var(--ink);border:2px solid var(--line);font-weight:600}
+.opt.ok{background:var(--ok);border-color:var(--okb)}
+.opt.no{background:var(--no);border-color:var(--nob)}
+.tray,.slot,.box{border:2px dashed var(--line);border-radius:14px;padding:8px;min-height:58px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slot{margin:6px 0}
+.slot:empty::before{content:attr(data-n);color:var(--mut);font-weight:700}
+.box:empty::before{content:attr(data-n);color:var(--mut);font-weight:700}
+.boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.box{flex-direction:column;align-items:stretch;justify-content:flex-start}
+.box b{display:block;text-align:center;font-size:15px}
+.chip{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--chip);border:2px solid var(--acc);font-weight:700;touch-action:none;user-select:none;cursor:grab}
+.chip em{font-style:normal;font-size:28px}
+.ghost{box-shadow:0 8px 20px rgba(0,0,0,.3);opacity:.9}
+canvas{width:100%;background:#fff;border:2px solid var(--line);border-radius:14px;touch-action:none;display:block}
+.cols{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}
+.cols span{width:32px;height:32px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);cursor:pointer}
+.msg{font-weight:800;margin:12px 0;padding:10px 14px;border-radius:12px}
+.msg.ok{background:var(--ok)}.msg.no{background:var(--no)}
+.fl{position:fixed;bottom:-40px;font-size:34px;pointer-events:none;animation:up 1.6s ease-out forwards;z-index:50}
+@keyframes up{to{transform:translateY(-90vh) rotate(20deg);opacity:0}}
+.stat{display:flex;gap:12px;margin:14px 0}
+.stat div{flex:1;text-align:center;border-radius:16px;padding:14px;font-size:34px;font-weight:900}
+.stat small{display:block;font-size:15px;font-weight:700}
+.stat .g{background:var(--ok)}.stat .r{background:var(--no)}
+@media (prefers-reduced-motion:reduce){.fl{animation-duration:.01s}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s), app=$('#app');
+const T=40;
+let TT=40,name='',cls='',i=0,ok=0,bad=0,locked=false,timer=null,left=T,tasks=[];
+
+const MC=[
+["Какой фактор окружающей среды относится к абиотическим?",["Температура воздуха","Количество хищников","Конкуренция растений","Деятельность бактерий"],0],
+["Как изменение количества осадков может повлиять на местную экосистему?",["Никак не повлияет на организмы","Изменит условия жизни организмов","Изменит только окраску животных","Полностью остановит круговорот веществ"],1],
+["Какая последовательность является правильной пищевой цепью?",["Лиса → трава → заяц","Заяц → трава → волк","Трава → заяц → волк","Волк → заяц → трава"],2],
+["Какую роль в пищевой цепи обычно выполняют зелёные растения?",["Разрушители органики","Производители органических веществ","Только хищники","Потребители первого порядка"],1],
+["Как называется постепенная смена одного сообщества организмов другим на определённой территории?",["Мутация","Миграция","Сукцессия","Конкуренция"],2],
+["Что может произойти на заброшенном поле, если его долго не обрабатывать?",["Постепенно появятся новые виды растений","Все живые организмы исчезнут","Почва навсегда перестанет изменяться","Пищевая цепь станет невозможной"],0],
+["Какое действие человека наиболее способствует сохранению экосистемы озера?",["Сброс бытовых отходов в воду","Чрезмерный вылов рыбы","Уничтожение прибрежной растительности","Очистка водоёма от мусора"],3],
+["Какое последствие может вызвать вырубка леса на большом участке?",["Увеличение числа мест обитания","Снижение биоразнообразия","Исчезновение всех абиотических факторов","Полное прекращение фотосинтеза на планете"],1],
+["Для чего создают особо охраняемые природные территории?",["Для расширения промышленных зон","Для увеличения охоты на редких животных","Для сохранения природных комплексов и редких видов","Для полного прекращения природных процессов"],2],
+["Зачем учёные используют научную классификацию живых организмов?",["Чтобы различать организмы и устанавливать их родство","Чтобы определить возраст каждой особи","Чтобы изменить наследственные признаки организмов","Чтобы распределить организмы только по размеру"],0],
+["Какая последовательность систематических категорий идёт от более крупной к более мелкой?",["Вид → род → семейство → класс","Класс → семейство → род → вид","Род → вид → класс → семейство","Семейство → класс → вид → род"],1],
+["Какое из перечисленных организмов относится к царству грибов?",["Амёба","Дрожжи","Хламидомонада","Инфузория-туфелька"],1],
+["Какой процесс характерен для зелёных растений и позволяет им образовывать органические вещества из неорганических?",["Фотосинтез","Пищеварение","Испарение","Брожение"],0],
+["Какой признак наиболее полезен при определении неизвестного растения с помощью определителя?",["Случайное место на странице учебника","Цвет обложки книги","Форма листьев","Количество страниц учебника"],2],
+["Какое действие лучше всего помогает сохранить редкие виды животных Казахстана?",["Разрушение мест их обитания","Незаконная охота","Загрязнение водоёмов","Охрана мест обитания и борьба с браконьерством"],3],
+["Кто основал систематику?",["Чарльз Дарвин","Карл Линней","Жан-Батист Ламарк","Теодор Шванн"],1],
+["Дайте определение систематике.",["Это наука, которая изучает строение организмов.","Это наука, которая описывает все живые организмы и устанавливает их родственные связи.","Это наука о взаимодействии организмов и среды.","Это наука, которая изучает развитие организмов в течение жизни."],1]
+];
+tasks=MC.map(m=>({t:'mc',q:m[0],o:m[1],a:m[2]}));
+tasks.push(
+{t:'sort',q:'Перетащи каждую картинку в нужное царство:',z:['Растения','Животные','Грибы'],
+ items:[['🌻','Подсолнух',0],['🐆','Снежный барс',1],['🍄','Мухомор',2],['🌳','Дуб',0],['🐟','Рыба',1],['🍞','Дрожжи',2]]},
+{t:'order',q:'Расставь систематические категории от самой мелкой к самой крупной (перетащи в ячейки):',n:['Самая мелкая','2','3','Самая крупная'],
+ items:[['🐾','Вид'],['🔹','Род'],['👪','Семейство'],['🏷️','Класс']]},
+{t:'sort',q:'Перетащи каждое животное в место, где оно живёт:',z:['Горы','Пустыня','Водоём'],h:'Снежный барс и беркут живут в горах, верблюд и ящерица — в пустыне, рыба и утка — у воды.',
+ items:[['🐆','Снежный барс',0],['🐪','Верблюд',1],['🐟','Рыба',2],['🦅','Беркут',0],['🦎','Ящерица',1],['🦆','Утка',2]]},
+{t:'order',q:'Составь пищевую цепь: начни с травы и перетащи остальных по порядку (кто кого ест).',n:['Начало: производитель','Ест траву','Ест того, кто ест траву','Конец цепи'],
+ items:[['🌿','Трава'],['🐛','Кузнечик'],['🐸','Лягушка'],['🐍','Змея']]}
+);
+tasks.splice(tasks.length-1,0,
+{t:'sort',time:90,q:'Живая или неживая природа? Перетащи каждую картинку в нужную группу:',z:['Живая природа','Неживая природа'],
+ items:[['🐺','Волк',0],['💧','Вода',1],['🌲','Ель',0],['🪨','Камень',1],['🍄','Гриб',0],['☀️','Солнце',1]]},
+{t:'order',time:90,q:'Расставь стадии развития растения по порядку:',n:['1','2','3','4'],
+ items:[['🌰','Семя'],['🌱','Росток'],['🌿','Взрослое растение'],['🍎','Плод с семенами']]},
+{t:'sort',time:90,q:'Кто кем является в природе? Перетащи картинки в нужную группу:',z:['Производители','Потребители','Разрушители'],
+ items:[['🌿','Трава',0],['🐇','Заяц',1],['🍄','Гриб',2],['🌳','Дерево',0],['🐺','Волк',1],['🦠','Бактерии',2]]}
+);
+
+const sh=a=>{a=[...a];for(let k=a.length-1;k>0;k--){const j=Math.random()*(k+1)|0;[a[k],a[j]]=[a[j],a[k]]}return a};
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+
+function start(){
+ app.innerHTML=`<div class="hero">🌍🌿</div><h1>Тест по биологии</h1>
+ <div class="card"><label>Как тебя зовут?</label><input id="nm" maxlength="40" placeholder="Напиши своё имя">
+ <label>В каком ты классе?</label><input id="cl" maxlength="10" placeholder="Например, 7 А">
+ <div id="er" style="color:var(--nob);font-weight:700;min-height:22px"></div>
+ <button class="wide" id="go">Начать тест</button></div>`;
+ $('#go').onclick=()=>{name=$('#nm').value.trim();cls=$('#cl').value.trim();
+  if(!name||!cls){$('#er').textContent='Напиши имя и класс, чтобы начать';return}
+  i=0;ok=0;bad=0;order=tasks.slice(0,17).map(x=>({...x,o:null}));show()};
+}
+let order=[];
+function show(){
+ if(i>=tasks.length)return end();
+ const k=tasks[i];locked=false;TT=k.time||T;left=TT;
+ app.innerHTML=`<div class="top"><span>Вопрос ${i+1} из ${tasks.length}</span><span id="tm">⏱ ${TT}</span></div>
+ <div class="bar" id="bar"><i></i></div><div class="card" id="box"><div class="q">${esc(k.q)}</div><div id="body"></div><div id="fb"></div></div>`;
+ const b=$('#body');
+ if(k.t==='mc'){
+  sh(k.o.map((x,n)=>[x,n])).forEach(([x,n])=>{const e=document.createElement('button');e.className='opt';e.textContent=x;e.dataset.n=n;
+   e.onclick=()=>{if(locked)return;const r=n===k.a;e.classList.add(r?'ok':'no');
+    if(!r)[...b.children].find(c=>c.dataset.n==k.a).classList.add('ok');done(r)};b.appendChild(e)});
+ }
+ if(k.t==='sort'||k.t==='order'){
+  const sorting=k.t==='sort';
+  let h='';
+  if(sorting)h+=`<div class="boxes">${k.z.map((z,n)=>`<div class="box zone" data-k="${n}" data-n="${z}"><b>${z}</b></div>`).join('')}</div>`;
+  else h+=k.n.map((z,n)=>`<div class="slot zone" data-cap="1" data-p="${n}" data-n="${z}"></div>`).join('');
+  h+=`<div class="tray zone" id="tray">${sh(k.items.map((x,n)=>({x,n}))).map(({x,n})=>`<div class="chip" data-n="${n}" data-k="${x[2]??''}"><em>${x[0]}</em>${x[1]}</div>`).join('')}</div>`;
+  b.innerHTML=h;drag(b,()=>chk());
+  const chk=()=>{if(locked||$('#tray').children.length)return;
+   let r;
+   if(sorting)r=[...b.querySelectorAll('.box')].every(z=>[...z.querySelectorAll('.chip')].every(c=>c.dataset.k===z.dataset.k));
+   else r=[...b.querySelectorAll('.slot')].every(s=>s.firstElementChild&&+s.firstElementChild.dataset.n===+s.dataset.p);
+   done(r,r?'':sorting?(k.h||'Подумай ещё: растения делают еду сами, животные едят других, грибы — отдельное царство.'):'Правильно: '+k.items.map(x=>x[0]+' '+x[1]).join(' → '))};
+ }
+ if(k.t==='draw'){
+  b.innerHTML=`<canvas id="cv" width="600" height="420"></canvas><div class="cols">${['#222','#2f9e5b','#e8a800','#e05555','#3b82d6','#8b5a2b'].map(c=>`<span style="background:${c}" data-c="${c}"></span>`).join('')}<button id="clr" style="padding:6px 14px">Стереть</button></div>
+  <button class="wide" id="chk">Готово</button>`;
+  const cv=$('#cv'),x=cv.getContext('2d');let dr=false,pts=0;x.lineWidth=7;x.lineCap='round';x.strokeStyle='#222';
+  const p=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+  cv.onpointerdown=e=>{if(locked)return;dr=true;const[a,c]=p(e);x.beginPath();x.moveTo(a,c)};
+  cv.onpointermove=e=>{if(!dr)return;const[a,c]=p(e);x.lineTo(a,c);x.stroke();pts++};
+  cv.onpointerup=cv.onpointerleave=()=>dr=false;
+  b.querySelectorAll('.cols span').forEach(s=>s.onclick=()=>x.strokeStyle=s.dataset.c);
+  $('#clr').onclick=()=>{x.clearRect(0,0,600,420);pts=0};
+  $('#chk').onclick=()=>{if(locked)return;if(pts<30){$('#fb').innerHTML='<div class="msg no">Нарисуй побольше: солнце, стебель и листья</div>';return}done(true)};
+ }
+ clearInterval(timer);
+ timer=setInterval(()=>{if(locked)return;left-=.1;
+  $('#tm').textContent='⏱ '+Math.ceil(left);$('#bar').firstElementChild.style.width=(left/TT*100)+'%';
+  $('#bar').classList.toggle('low',left<10);
+  if(left<=0){const k2=tasks[i];
+   if(k2.t==='mc'){[...$('#body').children].find(c=>c.dataset.n==k2.a).classList.add('ok')}
+   done(false,'Время вышло ⏰')}},100);
+}
+function done(r,note){
+ if(locked)return;locked=true;clearInterval(timer);
+ r?ok++:bad++;
+ float(r?['❤️','💖','💚','💗']:['😢','😞','😔','😭'],24);
+ const last=i===tasks.length-1;
+ $('#fb').innerHTML=`
+ <button class="wide" id="nx">${last?'Узнать результат':'Дальше'}</button>`;
+ $('#nx').onclick=()=>{i++;show()};
+ $('#nx').scrollIntoView({block:'nearest'});
+}
+function float(a,m=14){for(let n=0;n<m;n++){const s=document.createElement('span');s.className='fl';s.textContent=a[n%a.length];
+ s.style.left=Math.random()*90+'%';s.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),2200)}}
+function end(){
+ clearInterval(timer);
+ const pct=ok/tasks.length;
+ app.innerHTML=`<div class="hero">${pct>=.8?'🏆':pct>=.5?'🌟':'🌱'}</div><h1>Молодец, ${esc(name)}!</h1>
+ <div class="card"><p style="text-align:center;margin:0 0 4px">${esc(cls)} класс · ты ответил(а) на ${tasks.length} заданий</p>
+ <div class="stat"><div class="g">❤️ ${ok}<small>правильных</small></div><div class="r">😢 ${bad}<small>неправильных</small></div></div>
+ <p style="text-align:center;color:var(--mut)">${pct>=.8?'Отличный результат!':pct>=.5?'Хороший результат, ты на верном пути!':'Повтори тему и попробуй ещё раз — у тебя получится!'}</p>
+ <a class="wide wa" target="_blank" rel="noopener" href="https://wa.me/79207840681?text=${encodeURIComponent('Здравствуйте, Диана Ахиятовна! Меня зовут '+name+', '+cls+' класс. Мои результаты теста по биологии: правильных ответов — '+ok+', неправильных — '+bad+' (из '+tasks.length+').')}">💬 Давай отправим твои результаты Диане Ахиятовне</a></div>`;
+ float(['❤️','🎉','⭐']);
+}
+function drag(root,cb){
+ root.querySelectorAll('.chip').forEach(c=>{
+  c.onpointerdown=e=>{if(locked)return;e.preventDefault();
+   const r=c.getBoundingClientRect(),g=c.cloneNode(true);g.className='chip ghost';
+   g.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;z-index:99;pointer-events:none`;
+   document.body.appendChild(g);c.style.opacity=.3;const dx=e.clientX-r.left,dy=e.clientY-r.top;
+   const mv=v=>{g.style.left=v.clientX-dx+'px';g.style.top=v.clientY-dy+'px'};
+   const up=v=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);
+    g.remove();c.style.opacity=1;
+    const t=document.elementFromPoint(v.clientX,v.clientY),z=t&&t.closest('.zone');
+    if(z){const o=z.dataset.cap==='1'&&z.firstElementChild;
+     if(o&&o!==c)c.parentElement.appendChild(o);z.appendChild(c);cb&&cb()}};
+   document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)};
+ });
+}
+start();
+</script>
+</body>
+</html>
